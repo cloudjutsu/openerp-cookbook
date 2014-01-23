@@ -1,0 +1,4 @@
+openerp-cookbook
+================
+
+Install openerp
