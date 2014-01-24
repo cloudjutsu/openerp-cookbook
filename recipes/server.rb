@@ -12,25 +12,25 @@ include_recipe "openerp::common"
   end
 end
 
-remote_file "openerp-server" do
-  path "#{Chef::Config['file_cache_path']}/openerp-server-#{node[:openerp][:version]}.tar.gz"
+remote_file "openerp" do
+  path "#{Chef::Config['file_cache_path']}/openerp-#{node[:openerp][:version]}.tar.gz"
   source "http://nightly.openerp.com/7.0/nightly/src/openerp-#{node[:openerp][:version]}-latest.tar.gz"
   mode "0644"
 end
 
-bash "untar-openerp-server" do
+bash "untar-openerp" do
   code <<-EOH
-  tar zxvf #{Chef::Config['file_cache_path']}/openerp-server-#{node[:openerp][:version]}.tar.gz -C #{node[:openerp][:dir]}
-  chown -R openerp: #{node[:openerp][:dir]}/openerp-server-#{node[:openerp][:version]}
+  tar zxf #{Chef::Config['file_cache_path']}/openerp-#{node[:openerp][:version]}.tar.gz -C #{node[:openerp][:dir]}
+  chown -R openerp: #{node[:openerp][:dir]}/openerp-#{node[:openerp][:version]}*
   EOH
   not_if do 
-    Dir[ "#{node[:openerp][:dir]}/openerp-server-#{node[:openerp][:version]}-**" ]
+    Dir[ "#{node[:openerp][:dir]}/openerp-#{node[:openerp][:version]}-*" ].length > 0
   end
 end
 
 ruby_block "link #{node[:openerp][:dir]}/server" do
   block do
-    source= Dir[ "#{node[:openerp][:dir]}/openerp-7.0-**" ].sort.last
+    source= Dir[ "#{node[:openerp][:dir]}/openerp-#{node[:openerp][:version]}-*" ].sort.last
     File.symlink source, "#{node[:openerp][:dir]}/server" if ! File.symlink? "#{node[:openerp][:dir]}/server"
   end
 end

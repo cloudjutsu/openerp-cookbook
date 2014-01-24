@@ -24,12 +24,12 @@ define :openerp_site do
     cwd "#{node[:nginx][:dir]}"
     code <<-EOH
     rm -rf conf.d/default.conf
-    rm -rf sites-available/default.conf
+    rm -rf sites-enabled/default
     EOH
     notifies :reload, resources(:service => "nginx")
   end
 
-  template "#{node[:nginx][:dir]}/sites-available/openerp" do
+  template "#{node[:nginx][:dir]}/sites-enabled/openerp" do
     source "nginx-site.erb"
     owner "root"
     group "root"
